@@ -1,0 +1,57 @@
+# 80/20 Portfolio Backtesting Configuration
+
+# Region: US or EU
+region: US
+
+# Portfolio weights
+weights:
+  core: 0.80              # Core allocation (VOO/CSPX)
+  tilt_per_factor: 0.0667 # Per-factor tilt (20% / 3 factors)
+
+# Ticker symbols by region
+tickers:
+  US:
+    core: VOO
+    tilts:
+      - QUAL  # Quality
+      - VLUE  # Value
+      - MTUM  # Momentum
+    cash: SHY  # Short-term Treasury
+
+  EU:
+    core: CSPX
+    tilts:
+      - IUQA  # Quality
+      - IUVL  # Value
+      - IUMO  # Momentum
+    cash: IE00B14X4S71  # iShares USD Treasury 1-3yr
+
+# Rebalancing parameters
+rebalance:
+  frequency: quarterly           # Rebalance frequency
+  run_on_end_of_period: true    # Rebalance on last day of quarter
+  band_pct: 0.05                # 5% drift threshold
+  min_trade_pct: 0.0025         # Skip trades < 0.25% of portfolio
+
+# Trend filter parameters
+trend_filter:
+  lookback_months: 10           # Trend lookback period
+  lookback_days: 210            # ~10 months in trading days (21 days/month)
+
+# Transaction costs
+costs:
+  commission_bps: 2             # 2 basis points per trade
+  slippage_bps: 2               # 2 basis points slippage
+
+# Backtest parameters
+backtest:
+  start_date: '2013-01-01'      # Backtest start (QUAL inception)
+  initial_capital: 100000       # Starting capital (USD/EUR)
+
+# Acceptance criteria (for validation)
+targets:
+  excess_cagr_bps: 60           # Target +0.6% CAGR vs benchmark
+  max_drawdown_buffer_pct: 10   # Max DD can be 10% worse than benchmark
+  min_sharpe_ratio: 0.75        # Minimum Sharpe ratio
+  max_trades_per_year: 12       # Maximum annual trades
+  rolling_excess_hit_rate: 0.55 # 55% positive 36-month rolling periods
