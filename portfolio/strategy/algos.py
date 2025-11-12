@@ -161,44 +161,69 @@ class LimitWeights(bt.Algo):
             logger.warning("No target weights found in temp")
             return False
 
+        # Helper function to convert any value to float scalar
+        def to_float(val):
+            """Convert pandas Series/array/scalar to float"""
+            if val is None:
+                return 0.0
+            if isinstance(val, (pd.Series, np.ndarray)):
+                if len(val) == 0:
+                    return 0.0
+                return float(val.iloc[0] if hasattr(val, 'iloc') else val[0])
+            if hasattr(val, 'item'):
+                return float(val.item())
+            return float(val)
+
         # Get current portfolio value and positions
+        try:
+            current_value = to_float(target.value)
+        except:
+            current_value = 0.0
+
         # On first rebalance, value will be 0 or positions will be empty
-        if target.value == 0 or not hasattr(target, 'positions') or len(target.positions) == 0:
+        if current_value == 0 or not hasattr(target, 'positions') or len(target.positions) == 0:
             # First rebalance - always execute
             logger.debug(f"{target.now}: First rebalance, executing")
             return True
 
         # Calculate current weights from positions
         current_weights = {}
-        total_value = float(target.value)
 
         for sec, pos in target.positions.items():
-            if hasattr(sec, 'name'):
-                ticker = sec.name
-            else:
-                ticker = str(sec)
+            try:
+                # Get ticker name
+                if hasattr(sec, 'name'):
+                    ticker = sec.name
+                else:
+                    ticker = str(sec)
 
-            # Ensure pos is a scalar
-            if hasattr(pos, 'item'):
-                pos = pos.item()
+                # Convert position value to float scalar
+                pos_value = to_float(pos)
 
-            current_weights[ticker] = float(pos) / total_value
+                # Calculate weight (avoid division by zero)
+                if current_value > 0:
+                    current_weights[ticker] = pos_value / current_value
+                else:
+                    current_weights[ticker] = 0.0
+
+            except Exception as e:
+                logger.warning(f"Error processing position for {sec}: {e}")
+                continue
 
         # Calculate maximum drift across all positions
         max_drift = 0.0
         all_tickers = set(list(target_weights.keys()) + list(current_weights.keys()))
+
         for ticker in all_tickers:
-            target_w = target_weights.get(ticker, 0.0)
-            current_w = current_weights.get(ticker, 0.0)
+            try:
+                target_w = to_float(target_weights.get(ticker, 0.0))
+                current_w = to_float(current_weights.get(ticker, 0.0))
 
-            # Ensure scalar values (in case Series slips through)
-            if hasattr(target_w, 'item'):
-                target_w = float(target_w)
-            if hasattr(current_w, 'item'):
-                current_w = float(current_w)
-
-            drift = abs(float(target_w) - float(current_w))
-            max_drift = max(max_drift, drift)
+                drift = abs(target_w - current_w)
+                max_drift = max(max_drift, drift)
+            except Exception as e:
+                logger.warning(f"Error calculating drift for {ticker}: {e}")
+                continue
 
         # Check if drift exceeds band
         if max_drift < self.band_pct:

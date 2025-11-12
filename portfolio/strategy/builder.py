@@ -68,9 +68,8 @@ def create_strategy(region: Optional[str] = None, config=None) -> bt.Strategy:
                 lookback_days=config.lookback_days
             ),
 
-            # 4. Only rebalance if drift > threshold
-            # TODO: Re-enable LimitWeights after fixing Series handling
-            # LimitWeights(band_pct=config.rebalance_band_pct),
+            # 4. Only rebalance if drift > threshold (5% bands)
+            LimitWeights(band_pct=config.rebalance_band_pct),
 
             # 5. Convert weights dict to Series for bt
             WeighTarget(),
