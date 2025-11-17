@@ -26,6 +26,14 @@ tickers:
       - IUMO  # Momentum
     cash: IE00B14X4S71  # iShares USD Treasury 1-3yr
 
+  CRYPTO:
+    core: BTC-USD  # Bitcoin as core (use BTC or BTC-USD)
+    tilts:
+      - ETH-USD   # Ethereum
+      - BNB-USD   # Binance Coin (trading since 2017)
+      - LTC-USD   # Litecoin (OG crypto, trading since 2013)
+    cash: USDT-USD  # Tether stablecoin (or use SHY for USD cash)
+
 # Rebalancing parameters
 rebalance:
   frequency: quarterly           # Rebalance frequency

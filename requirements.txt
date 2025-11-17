@@ -3,6 +3,7 @@ bt>=1.0.1
 
 # Data fetching
 yfinance>=0.2.0
+cryptodatapy>=0.2.0
 
 # Data processing
 pandas>=2.0.0

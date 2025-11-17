@@ -178,7 +178,7 @@ Examples:
     backtest_parser = subparsers.add_parser('backtest', help='Run backtest')
     backtest_parser.add_argument('--start', help='Start date (YYYY-MM-DD)')
     backtest_parser.add_argument('--end', help='End date (YYYY-MM-DD)')
-    backtest_parser.add_argument('--region', choices=['US', 'EU'], help='Region')
+    backtest_parser.add_argument('--region', choices=['US', 'EU', 'CRYPTO'], help='Region')
     backtest_parser.add_argument('--capital', type=float, help='Initial capital')
     backtest_parser.add_argument('--no-benchmark', action='store_true', help='Skip benchmark')
     backtest_parser.add_argument('--no-cache', action='store_true', help='Disable data caching')
@@ -190,7 +190,7 @@ Examples:
     compare_parser = subparsers.add_parser('compare', help='Compare strategies')
     compare_parser.add_argument('--start', help='Start date (YYYY-MM-DD)')
     compare_parser.add_argument('--end', help='End date (YYYY-MM-DD)')
-    compare_parser.add_argument('--region', choices=['US', 'EU'], help='Region')
+    compare_parser.add_argument('--region', choices=['US', 'EU', 'CRYPTO'], help='Region')
     compare_parser.add_argument('--plot', action='store_true', help='Show plots')
     compare_parser.set_defaults(func=cmd_compare)
 

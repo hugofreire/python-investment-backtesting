@@ -35,8 +35,8 @@ class Config:
 
         # Validate region
         region = self._config['region']
-        if region not in ['US', 'EU']:
-            raise ValueError(f"Invalid region: {region}. Must be 'US' or 'EU'")
+        if region not in ['US', 'EU', 'CRYPTO']:
+            raise ValueError(f"Invalid region: {region}. Must be 'US', 'EU', or 'CRYPTO'")
 
         # Validate weights sum to ~1.0
         core_weight = self._config['weights']['core']
